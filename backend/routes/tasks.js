@@ -73,3 +73,31 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ msg: "Server error" });
   }
 });
+
+// ⏰ مؤقت التذكير (Notification Scheduler)
+const schedule = require("node-schedule");
+
+// دالة لتفعيل التذكير
+router.post("/setReminder/:id", async (req, res) => {
+  try {
+    const { reminderTime } = req.body;
+    const task = await Task.findById(req.params.id);
+    if (!task) return res.status(404).json({ msg: "Task not found" });
+
+    // حفظ وقت التذكير في المهمة
+    task.dueDate = reminderTime;
+    await task.save();
+
+    // جدولة إشعار وقت التذكير
+    const remindDate = new Date(reminderTime);
+    const remindBefore = new Date(remindDate.getTime() - 5 * 60000); // قبل 5 دقائق
+
+    schedule.scheduleJob(remindBefore, () => {
+      console.log(`🔔 Reminder: "${task.title}" is due soon!`);
+    });
+
+    res.json({ msg: "Reminder set successfully!" });
+  } catch (err) {
+    res.status(500).json({ msg: "Server error" });
+  }
+});
