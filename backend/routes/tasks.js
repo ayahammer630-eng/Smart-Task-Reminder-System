@@ -124,4 +124,20 @@ router.post('/add', async (req, res) => {
   }
 });
 
+// البحث عن المهام بالاسم أو التاريخ
+router.get('/search', async (req, res) => {
+  try {
+    const { query } = req.query; // القيمة التي كتبها المستخدم
+    const tasks = await Task.find({
+      $or: [
+        { title: { $regex: query, $options: 'i' } },
+        { dueDate: { $regex: query, $options: 'i' } }
+      ]
+    });
+    res.json(tasks);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
