@@ -34,7 +34,6 @@ function TasksList() {
     });
     fetchTasks();
   };
-
   return (
     <div style={{ width: "500px", margin: "50px auto" }}>
       <h2>📝 My Tasks</h2>
