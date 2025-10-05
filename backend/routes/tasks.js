@@ -8,9 +8,11 @@ const Task = mongoose.model(
   new mongoose.Schema({
     title: String,
     description: String,
+    dueDate: Date,          // ⏰ وقت تنفيذ المهمة
     completed: { type: Boolean, default: false },
   })
 );
+
 
 // 📌 عرض جميع المهام
 router.get("/", async (req, res) => {
