@@ -23,3 +23,23 @@ router.get("/", async (req, res) => {
 });
 
 module.exports = router;
+
+// 📌 إضافة مهمة جديدة
+router.post("/", async (req, res) => {
+  try {
+    const { title, description } = req.body;
+
+    if (!title) return res.status(400).json({ msg: "Title is required" });
+
+    const newTask = new Task({
+      title,
+      description,
+      completed: false,
+    });
+
+    await newTask.save();
+    res.json({ msg: "Task added successfully", task: newTask });
+  } catch (err) {
+    res.status(500).json({ msg: "Server error" });
+  }
+});
