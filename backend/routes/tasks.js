@@ -43,3 +43,31 @@ router.post("/", async (req, res) => {
     res.status(500).json({ msg: "Server error" });
   }
 });
+
+
+// ✏️ تعديل مهمة (Edit Task)
+router.put("/:id", async (req, res) => {
+  try {
+    const { title, description, completed } = req.body;
+    const task = await Task.findByIdAndUpdate(
+      req.params.id,
+      { title, description, completed },
+      { new: true }
+    );
+    if (!task) return res.status(404).json({ msg: "Task not found" });
+    res.json({ msg: "Task updated successfully", task });
+  } catch (err) {
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
+// 🗑️ حذف مهمة (Delete Task)
+router.delete("/:id", async (req, res) => {
+  try {
+    const task = await Task.findByIdAndDelete(req.params.id);
+    if (!task) return res.status(404).json({ msg: "Task not found" });
+    res.json({ msg: "Task deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ msg: "Server error" });
+  }
+});
