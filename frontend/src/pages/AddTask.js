@@ -90,4 +90,39 @@ function TasksList() {
   );
 }
 
+
+import React, { useState } from 'react';
+import axios from 'axios';
+
+function AddTask() {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [dueDate, setDueDate] = useState('');
+  const [reminderTime, setReminderTime] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await axios.post('http://localhost:5000/tasks/add', {
+      title,
+      description,
+      dueDate,
+      reminderTime,
+      userId: 'userid123'
+    });
+    alert('✅ Task added with reminder!');
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input type="text" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+      <textarea placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
+      <input type="datetime-local" value={dueDate} onChange={(e) => setDueDate(e.target.value)} required />
+      <input type="datetime-local" value={reminderTime} onChange={(e) => setReminderTime(e.target.value)} />
+      <button type="submit">Add Task</button>
+    </form>
+  );
+}
+
+
+
 export default TasksList;

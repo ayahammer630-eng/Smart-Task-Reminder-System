@@ -101,3 +101,27 @@ router.post("/setReminder/:id", async (req, res) => {
     res.status(500).json({ msg: "Server error" });
   }
 });
+
+const express = require('express');
+const Task = require('../models/Task');
+const schedule = require('node-schedule');
+
+router.post('/add', async (req, res) => {
+  try {
+    const { title, description, dueDate, reminderTime, userId } = req.body;
+    const newTask = new Task({ title, description, dueDate, reminderTime, userId });
+    await newTask.save();
+
+    // جدولة التذكير
+    if (reminderTime) {
+      schedule.scheduleJob(reminderTime, () => {
+      });
+    }
+
+    res.json({ message: 'Task created with reminder successfully', task: newTask });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+module.exports = router;
