@@ -68,5 +68,54 @@ function RemindTasks() {
 }
 
 
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-export default RemindTasks;
+function TasksList() {
+  const [tasks, setTasks] = useState([]);
+  const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  const fetchTasks = async () => {
+    const res = await axios.get('http://localhost:5000/tasks');
+    setTasks(res.data);
+  };
+
+  const handleSearch = async (e) => {
+    const value = e.target.value;
+    setSearch(value);
+
+    if (value.trim() === '') {
+      fetchTasks(); // رجعي القائمة الأصلية إذا البحث فاضي
+    } else {
+      const res = await axios.get("http://localhost:5000/tasks/search?query=${value}");
+      setTasks(res.data);
+    }
+  };
+
+  return (
+    <div>
+      <h2>My Tasks</h2>
+      <input
+        type="text"
+        placeholder="🔍 Search by name or date"
+        value={search}
+        onChange={handleSearch}
+      />
+      <ul>
+        {tasks.map((task) => (
+          <li key={task._id}>
+            <strong>{task.title}</strong> - {new Date(task.dueDate).toLocaleDateString()}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default TasksList;
+
+
